@@ -1,0 +1,5 @@
+import type { AgentConfig, AnalysisExecution, AppSettings, Rule } from '../types'
+const prefix = 'env-agent-demo:'
+const read = <T,>(key: string, fallback: T): T => { try { const value = localStorage.getItem(prefix + key); return value ? JSON.parse(value) as T : fallback } catch { return fallback } }
+const write = <T,>(key: string, value: T) => localStorage.setItem(prefix + key, JSON.stringify(value))
+export const storage = { getRules: (fallback: Rule[]) => read('rules', fallback), saveRules: (value: Rule[]) => write('rules', value), getAgents: (fallback: AgentConfig[]) => read('agents', fallback), saveAgents: (value: AgentConfig[]) => write('agents', value), getExecutions: () => read<AnalysisExecution[]>('executions', []), saveExecutions: (value: AnalysisExecution[]) => write('executions', value), getSettings: () => read<AppSettings>('settings', { simulationSpeed: 'Normal', verifierMaxRetry: 2, autoSave: true }), saveSettings: (value: AppSettings) => write('settings', value), reset: () => Object.keys(localStorage).filter((key) => key.startsWith(prefix)).forEach((key) => localStorage.removeItem(key)) }
